@@ -196,7 +196,7 @@ def reschedule(date):
 
 def is_logged_in():
     content = driver.page_source
-    if(content.find("error") != -1):
+    if(content.find("invalid") != -1):
         return False
     return True
 
@@ -251,10 +251,13 @@ if __name__ == "__main__":
             print()
 
             dates = get_date()[:5]
+            print('i am here 1')
             if not dates:
-              msg = "List is empty"
-              send_notification(msg)
-              EXIT = True
+                print('i am here 2')
+                msg = "List is empty"
+                send_notification(msg)
+                EXIT = True
+            print('i am here 3')
             print_dates(dates)
             date = get_available_date(dates)
             print()
