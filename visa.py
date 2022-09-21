@@ -44,9 +44,11 @@ REGEX_CONTINUE = "//a[contains(text(),'Continue')]"
 def MY_CONDITION(month, day): return True # No custom condition wanted for the new scheduled date
 
 STEP_TIME = 0.5  # time between steps (interactions with forms): 0.5 seconds
-RETRY_TIME = 60*10  # wait time between retries/checks for available dates: 10 minutes
+# RETRY_TIME = 60*10  # wait time between retries/checks for available dates: 10 minutes
+RETRY_TIME = 61  # wait time between retries/checks for available dates: 10 minutes
 EXCEPTION_TIME = 60*30  # wait time when an exception occurs: 30 minutes
-COOLDOWN_TIME = 60*60  # wait time when temporary banned (empty list): 60 minutes
+# COOLDOWN_TIME = 60*60  # wait time when temporary banned (empty list): 60 minutes
+COOLDOWN_TIME = 61  # wait time when temporary banned (empty list): 60 minutes
 
 DATE_URL = f"https://ais.usvisa-info.com/{COUNTRY_CODE}/niv/schedule/{SCHEDULE_ID}/appointment/days/{FACILITY_ID}.json?appointments[expedite]=false"
 TIME_URL = f"https://ais.usvisa-info.com/{COUNTRY_CODE}/niv/schedule/{SCHEDULE_ID}/appointment/times/{FACILITY_ID}.json?date=%s&appointments[expedite]=false"
@@ -196,7 +198,7 @@ def reschedule(date):
 
 def is_logged_in():
     content = driver.page_source
-    if(content.find("invalid") != -1):
+    if(content.find("error") != -1):
         return False
     return True
 
@@ -237,6 +239,37 @@ def push_notification(dates):
         msg = msg + d.get('date') + '; '
     send_notification(msg)
 
+# if __name__ == "__main__":
+#     login()
+#     retry_count = 0
+#     loop_counter = 0
+#     while 1:
+#         if retry_count > 6:
+#             break
+#         try:
+#             print(datetime.today())
+#             print("------------------")
+
+#             dates = get_date()[:5]
+#             print_date(dates)
+#             date = get_available_date(dates)
+#             if date:
+#                 reschedule(date)
+#                 push_notification(dates)
+
+#             if(EXIT):
+#                 break
+
+#             time.sleep(SLEEP_TIME)
+#         except:
+#             retry_count += 1
+#             time.sleep(60*5)
+
+#         loop_counter = loop_counter + 1
+#         print(loop_counter)
+    
+#     if(not EXIT):
+#         send("HELP! Crashed.")
 
 if __name__ == "__main__":
     login()
@@ -251,13 +284,10 @@ if __name__ == "__main__":
             print()
 
             dates = get_date()[:5]
-            print('i am here 1')
             if not dates:
-                print('i am here 2')
                 msg = "List is empty"
                 send_notification(msg)
                 EXIT = True
-            print('i am here 3')
             print_dates(dates)
             date = get_available_date(dates)
             print()
@@ -271,12 +301,14 @@ if __name__ == "__main__":
                 break
 
             if not dates:
-              msg = "List is empty"
-              send_notification(msg)
-              #EXIT = True
-              time.sleep(COOLDOWN_TIME)
+                msg = "List is empty"
+                send_notification(msg)
+                #EXIT = True
+                print('cooling down')
+                time.sleep(COOLDOWN_TIME)
             else:
-              time.sleep(RETRY_TIME)
+                print('waiting for retry')
+                time.sleep(RETRY_TIME)
 
         except:
             retry_count += 1
