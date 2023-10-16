@@ -17,4 +17,4 @@ US VISA (ais.usvisa-info.com) appointment re-scheduler - Colombian adaptation
 - That's it!
 
 ## Acknowledgement
-Thanks to @yaojialyu for creating the initial script and to @cejaramillof for adapting it to Colombia!
+Thanks to @yaojialyu for creating the initial script
